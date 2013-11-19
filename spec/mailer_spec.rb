@@ -92,12 +92,14 @@ describe MandrillQueue::Mailer do
 		end
 
 		it 'gets all template names for mailer class' do
-			subject.class.all_templates.should == [
-				"test-foo-mail", "test-merge-vars", "test-html-message",
-				"test-recipients-from-array", "test-recipients-from-array-with-custom-mapping",
-				"test-recipients", "test-delayed-email", "test-short-mailer",
-				"test-default-mailer", "test-attachment-mailer"
-			]
+      subject.class.all_templates.each do |template|
+        [
+          "test-foo-mail", "test-merge-vars", "test-html-message",
+          "test-recipients-from-array", "test-recipients-from-array-with-custom-mapping",
+          "test-recipients", "test-delayed-email", "test-short-mailer",
+          "test-default-mailer", "test-attachment-mailer"
+        ].should include(template)
+      end
 		end
 
 		it 'uses called method for template name' do
