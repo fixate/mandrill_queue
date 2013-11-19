@@ -17,6 +17,6 @@ group :test do
   gem 'libnotify' if RUBY_PLATFORM =~ /linux/i
 end
 
-group :development, :test do
-  gem 'debugger'
-end
+# group :development, :test do
+#   gem 'debugger', platform: :ruby
+# end
