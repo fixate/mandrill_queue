@@ -1,4 +1,4 @@
-guard :rspec, cmd: 'rspec -d --order rand:$RANDOM' do
+guard :rspec, cmd: 'rspec --order rand:$RANDOM' do
   watch(%r{^spec/.+_spec\.rb$})
   watch(%r{^lib/(.+)\.rb$})     { |m| "spec/lib/#{m[1]}_spec.rb" }
   watch('spec/spec_helper.rb')  { "spec" }
