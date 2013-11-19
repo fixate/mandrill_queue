@@ -154,16 +154,19 @@ class DeviseMailer < MandrillResque::Mailer
     end
   end
 
+  # Setup a template with the slug: devise-confirmation-instructions
   def confirmation_instructions(record, token, opts = {})
     confirm_url = user_confirmation_url(record, confirmation_token: token)
     devise_mail(record, {name: record.fullname, confirmation_url: confirm_url})
   end
 
+  # Slug: devise-reset-password-instructions
   def reset_password_instructions(record, token, opts = {})
     reset_url = edit_user_password_url(record, reset_password_token: token)
     devise_mail(record, {name: record.fullname, reset_url: reset_url})
   end
 
+  # Slug: devise-unlock-instructions
   def unlock_instructions(record, token, opts = {})
     unlock_url = user_unlock_url(record, unlock_token: token)
     devise_mail(record, {name: record.fullname, unlock_url: unlock_url})
