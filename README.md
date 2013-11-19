@@ -12,7 +12,7 @@ The DSL is modelled on the JSON api [here](https://mandrillapp.com/api/docs/mess
 
     # app/mailers/my_mailer.rb
     class MyMailer < MandrillQueue::Mailer
-      # Template names are inferred from the class_name (with Mailer) + the method
+      # Template names are inferred from the class_name (without Mailer) + the method
       # name. Spaces are `sluggified`. If you want to override the prefixes use:
       # template_prefix 'my-project'
       # now templates will be 'my-project' + sluggified method
