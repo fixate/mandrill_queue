@@ -1,4 +1,6 @@
-# MandrillQueue::Mailer
+==========================
+  MandrillQueue::Mailer
+==========================
 
 DSL for sending mailers through Mailchimps Mandrill API. This gem enqueues the
 message on a background worker (`Resque` only for now, but I want to refactor
@@ -103,8 +105,6 @@ to not suck so much.
     # Meanwhile in another file...
     # maybe your controller...
     # Just like ActionMailer (note the class method calls are handed to instance methods)
-    # Devise will also call deliver, so you can put your devise templates on Mandrill!
-    # It will not render your devise views, but you can do it manually a la `message() {html '...'}`
     MyMailer.welcome_many(users).deliver
 
 ## Installation
@@ -135,10 +135,52 @@ since I run mine outside Rails as a lightweight worker using:
 
     rake resque:work -r ./worker.rb QUEUES=mailer
 
+
+## Devise mailer integration
+
+Since Mandrill_Queue quacks like ActionMailer where it counts, getting your Devise
+mailers on Mandrill infrastructure is pretty easy. Here is my implementation:
+
+    class DeviseMailer < MandrillResque::Mailer
+      defaults do
+        message do
+          from_email Devise.mailer_sender
+          track_clicks false
+          track_opens false
+          view_content_link false
+        end
+      end
+
+      def confirmation_instructions(record, token, opts = {})
+        confirm_url = user_confirmation_url(record, confirmation_token: token)
+        devise_mail(record, {name: record.fullname, confirmation_url: confirm_url})
+      end
+
+      def reset_password_instructions(record, token, opts = {})
+        reset_url = edit_user_password_url(record, reset_password_token: token)
+        devise_mail(record, {name: record.fullname, reset_url: reset_url})
+      end
+
+      def unlock_instructions(record, token, opts = {})
+        unlock_url = user_unlock_url(record, unlock_token: token)
+        devise_mail(record, {name: record.fullname, unlock_url: unlock_url})
+      end
+
+      protected
+      def devise_mail(record, global_vars = {})
+        message do
+          to record, :email, :fullname
+
+          global_merge_vars global_vars
+        end
+      end
+    end
+
 ## TODO
 
-1. Refactor so that it can work with `Sidekiq` - this is an easy one!
-2. Render ActionView views to mailers
+1. Refactor so that it can work with `Sidekiq` or a custom adapter - coming soon...
+2. Allow synchonous sending.
+2. Render ActionView views to mailers.
 
 ## Contributing
 
