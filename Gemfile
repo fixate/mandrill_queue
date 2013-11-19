@@ -5,9 +5,6 @@ gemspec
 group :test do
   gem 'rspec', require: false
   gem 'guard-rspec', require: false
-  gem 'timecop', require: false
-  gem 'factory_girl', require: false
-  gem 'faker', require: false
 
   gem 'rb-inotify', :require => false
   gem 'rb-fsevent', :require => false

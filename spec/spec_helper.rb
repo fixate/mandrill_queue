@@ -4,7 +4,6 @@ require 'mandrill_queue'
 require 'mandrill_queue/mailer'
 
 require 'rspec'
-require 'debugger'
 require 'timecop'
 require 'factory_girl'
 require 'faker'
