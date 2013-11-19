@@ -1,6 +1,7 @@
 ==========================
   MandrillQueue::Mailer
 ==========================
+[![Build Status](https://travis-ci.org/fixate/mandrill_queue.png)](https://travis-ci.org/fixate/mandrill_queue)
 
 DSL for sending mailers through Mailchimps Mandrill API. This gem enqueues the
 message on a background worker (`Resque` only for now, but I want to refactor
