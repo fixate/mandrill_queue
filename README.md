@@ -8,9 +8,6 @@ so that it doesnt matter).
 
 The DSL is modelled on the JSON api [here](https://mandrillapp.com/api/docs/messages.ruby.html#method=send-template).
 
-_This is my first gem, so tell me when I suck and I will try and absorb your genius
-to not suck so much.
-
 ## The DSL
 
     # app/mailers/my_mailer.rb
