@@ -118,14 +118,34 @@ but didn't know this (but it's optional):
 
     rails g mandrill_queue:initializer
 
-Global configuration options are documented in the initializer
-but heres a taster:
+Global configuration options are documented in the initializer,
+but here's a taster:
 
 ```ruby
     MandrillQueue.configure do |config|
-      config.queue = :hipster_queue
-      # ...
-    end
+        # Message defaults.
+        # A hash of application-wide default values for messages.
+        # These can be overriden by class level defaults and by method
+        # level defaults.
+        # e.g.
+        # {
+        #                from_email: 'no-reply@example.com',
+        #                preserve_recipients: false,
+        #                global_merge_vars: {
+        #                        application_name: 'My super app!'
+        #                }
+        # }
+        config.message_defaults = {
+          preserve_recipients: false,
+          from_email: 'no-reply@mysite.com'
+        }
+
+        # NEEDED FOR WORKER ONLY
+        # Mandrill api key needed for worker only
+        config.api_key = 'xxxxxx'
+        config.default_worker_class = MyWorker
+        config.default_queue = :hipster_queue
+end
 ```
 
 ## Setting up the worker
