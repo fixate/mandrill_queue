@@ -12,6 +12,8 @@ group :test do
 
   gem 'ruby_gntp' if RUBY_PLATFORM =~ /darwin/i
   gem 'libnotify' if RUBY_PLATFORM =~ /linux/i
+
+  gem 'coveralls', require: false
 end
 
 # group :development, :test do

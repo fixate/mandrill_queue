@@ -1,3 +1,6 @@
+require 'coveralls'
+Coveralls.wear!
+
 $:.unshift(File.expand_path('../../lib', __FILE__))
 
 require 'mandrill_queue'
