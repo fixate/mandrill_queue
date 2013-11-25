@@ -16,6 +16,11 @@ group :test do
   gem 'coveralls', require: false
 end
 
+platforms :rbx do
+  gem 'racc'
+  gem 'rubysl'
+end
+
 # group :development, :test do
 #   gem 'debugger', platform: :ruby
 # end
