@@ -18,6 +18,7 @@ end
 
 platforms :rbx do
   gem 'racc'
+  gem 'rubinius-coverage'
   gem 'rubysl'
 end
 
