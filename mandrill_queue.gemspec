@@ -24,7 +24,7 @@ Gem::Specification.new do |spec|
     spec.add_dependency "activesupport", "~> 3"
   end
   spec.add_dependency "mandrill-api", "1.0.49"
-  spec.add_dependency "mime-types", "1.25"
+  spec.add_dependency "mime-types", "~> 2.0"
 
   spec.add_development_dependency "bundler", "~> 1.3"
   spec.add_development_dependency "rake"
