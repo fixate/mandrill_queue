@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = MandrillQueue::VERSION
   spec.authors       = ["Stan Bondi"]
   spec.email         = ["stan@fixate.it"]
-  spec.description   = %q{Use MailChimps Mandrill to send mailers through a background worker queue.}
   spec.summary       = %q{Use MailChimps Mandrill to send mailers through a background worker queue.}
+  spec.description   = %q{An easy to use DSL to send mailers using Mailchimps Mandrill api.}
   spec.homepage      = "https://github.com/fixate/mandrill_queue/"
   spec.license       = "MIT"
 
