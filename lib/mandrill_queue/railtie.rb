@@ -10,10 +10,6 @@ module MandrillQueue
         include AbstractController::UrlFor
         extend ::AbstractController::Railties::RoutesHelpers.with(app.routes)
         include app.routes.mounted_helpers
-
-				unless app.routes.default_url_options.has_key?(:host)
-					app.routes.default_url_options = app.config.action_mailer.default_url_options
-				end
       end
     end
   end
