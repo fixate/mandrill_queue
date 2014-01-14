@@ -45,6 +45,10 @@ module MandrillQueue
 	#   end
 	# end
 
+  def self.eager_load!
+    # No autoloads
+  end
+
 	def self.reset_config(&block)
 		@configuration = nil
 		configure(&block) if block_given?
