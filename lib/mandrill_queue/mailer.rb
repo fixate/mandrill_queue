@@ -133,7 +133,7 @@ module MandrillQueue
 
 		def deliver
 			validate!
-			MandrillQueue.resque.enqueue_to(queue, worker_class, to_hash)
+			MandrillQueue.adapter.enqueue_to(queue, worker_class, to_hash)
 		end
 
 		def to_hash(options = {})
