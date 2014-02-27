@@ -113,7 +113,7 @@ MyMailer.welcome_many(users).deliver
 You probably already know this bit:
 
     gem 'resque' # Support for Sidekiq and writing custom adapters coming soon...
-    gem 'mandrill-queue'
+    gem 'mandrill_queue'
 
 but didn't know this (but it's optional):
 
