@@ -3,10 +3,8 @@ require 'stringio'
 
 module MandrillQueue
 	module Logging
-		def logging
-			@_logger ||= MandrillQueue.configuration.logger || begin
-			MandrillQueue.resque.constants.include?(:Logging) ? MandrillQueue.resque::Logging : nil
-			end
+		def logger
+			MandrillQueue.configuration.logger
 		end
 
 		def pretty(obj)
@@ -35,16 +33,16 @@ module MandrillQueue
 				result_formatter(r)
 			end
 
-			logging.debug <<-TXT.tr("\t", '')
+			logger.debug <<-TXT.tr("\t", '')
 				\n*******************************************
 			#{formatted.join("\n")}
 				*******************************************
 			TXT
 
 			if errors.empty?
-				logging.info("#{result.count} message(s) successfully sent.")
+				logger.info("#{result.count} message(s) successfully sent.")
 			else
-				logging.error("The following messages were not sent:\n#{errors.join("\n")}")
+				logger.error("The following messages were not sent:\n#{errors.join("\n")}")
 			end
 		end
 	end

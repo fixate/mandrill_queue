@@ -9,4 +9,10 @@ describe MandrillQueue do
 		end
 		described_class.configuration.message_defaults.should == {}
 	end
+
+  it 'loads the configured adapter' do
+    pending
+    described_class.configure { |c| c.adapter = :sidekiq }
+    expect(described_class.adapter).to be_kind_of(MandrillQueue::Adapters::SidekiqAdapter)
+  end
 end

@@ -4,8 +4,15 @@ require 'support/mailer'
 
 describe MandrillQueue::Mailer do
 	subject { TestMailer.new }
-	before(:each) { MandrillQueue.reset_config }
-	after(:all) { MandrillQueue.reset_config }
+  # before(:each) { MandrillQueue.reset_config }
+	# after { MandrillQueue.reset_config }
+
+  before do
+    MandrillQueue.configure do |c|
+      c.adapter = double(:adapter, enqueue_to: true)
+    end
+  end
+
 	def configure(&block)
 		subject.reset!
 		MandrillQueue.configure(&block)
@@ -202,8 +209,8 @@ describe MandrillQueue::Mailer do
 	end
 
 	context 'delivery' do
-		before(:each) { MandrillQueue.reset_config }
-		after(:all) { MandrillQueue.reset_config }
+		# before(:each) { MandrillQueue.reset_config }
+		# after(:all) { MandrillQueue.reset_config }
 
 		def check_enqueue_to(*args)
 			Resque.should receive(:enqueue_to).with(*args)
@@ -216,7 +223,7 @@ describe MandrillQueue::Mailer do
 		it 'enqueues using configured class' do
 			resque = double(:my_resque)
 			configure do |config|
-				config.resque = resque
+				config.adapter = resque
 			end
 
 			resque.should receive(:enqueue_to).with(subject.queue, subject.worker_class, subject.to_hash)
