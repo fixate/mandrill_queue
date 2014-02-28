@@ -8,6 +8,7 @@ module MandrillQueue
 		include MandrillApi
 		include Logging
 		extend Hooks
+    include Sidekiq::Worker if defined?(Sidekiq)
 
 		def ip_pool
 			"Default Pool"
