@@ -25,14 +25,16 @@ MandrillQueue.configure do |config|
   # * :sidekiq
   # * anything that responds to call, return value is used as the adapter
   # * Class name in string format (e.g. adapter sitting in lib/)
-	# config.resque = MyOwnResque
+  # * Any object that responds to :enqueue_to with arity > 1
+	# config.adapter = MyOwnQueuer
 
 	# Allows you to use your own worker for processing the mandrill
 	# queue. This can be overriden at the class level.
 	# config.default_worker_class = MyWorker
 
 	# Allows you to override the queue name used to enqueue
-	# to resque. This can be overriden at the class level
+	# to the background queue. This can be overriden at the
+  # class level.
 	# Defaults to :mailer
 	# config.default_queue = :another_queue
 
