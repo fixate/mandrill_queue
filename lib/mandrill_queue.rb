@@ -47,11 +47,16 @@ module MandrillQueue
     end
   end
 
+  def self.adapter=(adapter)
+    @_adapter = adapter.nil? ? nil : load_adapter(adapter)
+  end
+
   def self.eager_load!
     # No autoloads
   end
 
 	def self.reset_config(&block)
+    self.adapter = nil
 		@configuration = nil
 		configure(&block) if block_given?
 	end
