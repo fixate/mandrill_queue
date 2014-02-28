@@ -18,7 +18,13 @@ MandrillQueue.configure do |config|
 	# }
 	# config.message_defaults = {}
 
-	# MandrillQueue will call enqueue on this instead of Resque
+  # Change to your prefered queue (adapter)
+  # Adapters should respond to :enqueue_to
+  # Valid values are:
+  # * :resque (default)
+  # * :sidekiq
+  # * anything that responds to call, return value is used as the adapter
+  # * Class name in string format (e.g. adapter sitting in lib/)
 	# config.resque = MyOwnResque
 
 	# Allows you to use your own worker for processing the mandrill
