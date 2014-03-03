@@ -5,8 +5,7 @@
 [![Coverage Status](https://coveralls.io/repos/fixate/mandrill_queue/badge.png)](https://coveralls.io/r/fixate/mandrill_queue)
 
 DSL for sending mailers through Mailchimps Mandrill API. This gem enqueues the
-message on a background worker (`Resque` only for now, but I want to refactor
-so that it doesnt matter).
+message on a background worker (`Resque` or `Sidekiq` or write an adapter).
 
 The DSL is modelled on the JSON api [here](https://mandrillapp.com/api/docs/messages.ruby.html#method=send-template).
 
@@ -167,7 +166,7 @@ Since Mandrill_Queue quacks like ActionMailer where it counts, getting your Devi
 mailers on Mandrill infrastructure is pretty easy. Here is my implementation:
 
 ```ruby
-class DeviseMailer < MandrillResque::Mailer
+class DeviseMailer < MandrillQueue::Mailer
   defaults do
     message do
       from_email Devise.mailer_sender
@@ -208,9 +207,8 @@ end
 
 ## TODO
 
-1. Refactor so that it can work with `Sidekiq` or a custom adapter - coming soon...
+1. Render ActionView views to mailers.
 2. Allow synchonous sending.
-2. Render ActionView views to mailers.
 
 ## Contributing
 

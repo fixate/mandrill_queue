@@ -29,6 +29,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake"
 
   spec.add_development_dependency 'timecop'
+  spec.add_development_dependency 'rspec-mocks'
   spec.add_development_dependency 'factory_girl'
   spec.add_development_dependency 'faker'
 end
