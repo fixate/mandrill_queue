@@ -106,7 +106,7 @@ end
 
 Some code that undoubtably looks familiar to you:
 
-```
+```ruby
 # Just like ActionMailer (note the class method calls are handed to instance methods)
 MyMailer.welcome_many(users).deliver
 ```
