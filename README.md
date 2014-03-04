@@ -150,14 +150,13 @@ end
 
 ## Setting up the worker
 
-Run it with a rake task like so:
+Run the worker in the normal way:
 
+    # Resque
     rake resque:work QUEUES=mailer
 
-TODO: I still need to check that everything is OK when running the worker in Rails
-since I run mine outside Rails as a lightweight worker using:
-
-    rake resque:work -r ./worker.rb QUEUES=mailer
+    # Sidekiq
+    sidekiq -q mailer
 
 
 ## Devise mailer integration
@@ -213,7 +212,9 @@ end
 ## Contributing
 
 1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
+2. Create your feature branch (`git checkout -b feature/my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
+4. Push to the branch (`git push origin feature/my-new-feature`)
 5. Create new Pull Request
+
+or use [Git Flow](https://github.com/nvie/gitflow)
