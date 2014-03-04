@@ -100,12 +100,18 @@ def html_message(html)
     html "<html><body>#{html}</html></body>"
   end
 end
+```
 
-# Meanwhile in another file...
-# maybe your controller...
+### Delivering mail
+
+Some code that undoubtably looks familiar to you:
+
+```
 # Just like ActionMailer (note the class method calls are handed to instance methods)
 MyMailer.welcome_many(users).deliver
 ```
+
+This can be added anywhere like a Rails controller or Sinatra endpoint.
 
 ## Installation
 
