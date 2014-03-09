@@ -162,9 +162,18 @@ Run the worker in the normal way:
 ## Devise mailer integration
 
 Since Mandrill_Queue quacks like ActionMailer where it counts, getting your Devise
-mailers on Mandrill infrastructure is pretty easy. Here is my implementation:
+mailers on Mandrill infrastructure is pretty easy.
+
+Add the following to your devise initializer:
 
 ```ruby
+config.mailer = 'DeviseMailer'
+```
+
+Here is my DeviseMailer implementation:
+
+```ruby
+# app/mailers/devise_mailer.rb
 class DeviseMailer < MandrillQueue::Mailer
   defaults do
     message do
