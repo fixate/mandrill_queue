@@ -50,7 +50,7 @@ module MandrillQueue
 			end
 
 			def message_defaults
-				md = configuration.message_defaults
+				md = configuration.message_defaults || {}
 				md.merge!(defaults[:message]) unless @_in_defaults || defaults[:message].nil?
 				md
 			end
