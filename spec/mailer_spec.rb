@@ -76,6 +76,12 @@ describe MandrillQueue::Mailer do
 			subject.class.defaults = olddefaults
 			subject.use_defaults!
 		end
+
+    it "doesn't raise error when message_defaults are nil and message defaults are set" do
+      configure { |c| c.message_defaults = nil }
+      described_class.defaults = {message: {}}
+      expect{ described_class.message_defaults }.to_not raise_error
+    end
 	end
 
 	context 'validation' do
