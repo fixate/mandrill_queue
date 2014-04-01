@@ -50,7 +50,7 @@ module MandrillQueue
 			end
 
 			def message_defaults
-				md = configuration.message_defaults
+				md = configuration.message_defaults || {}
 				md.merge!(defaults[:message]) unless @_in_defaults || defaults[:message].nil?
 				md
 			end
@@ -133,7 +133,7 @@ module MandrillQueue
 
 		def deliver
 			validate!
-			MandrillQueue.resque.enqueue_to(queue, worker_class, to_hash)
+			MandrillQueue.adapter.enqueue_to(queue, worker_class, to_hash)
 		end
 
 		def to_hash(options = {})

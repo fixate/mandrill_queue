@@ -1,7 +1,7 @@
 module MandrillQueue
 	class Configuration
 		ACCESSORS = [:message_defaults, :resque, :default_worker_class,
-							 :default_queue, :api_key, :logger]
+							 :default_queue, :api_key, :logger, :adapter]
 		attr_accessor(*ACCESSORS)
 
 		def initialize(defaults = {}, &block)

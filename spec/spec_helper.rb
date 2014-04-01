@@ -11,6 +11,10 @@ require 'timecop'
 require 'factory_girl'
 require 'faker'
 
+Dir[File.expand_path('../support/**/*.rb', __FILE__)].each { |f| require f }
+
 RSpec.configure do |config|
-	config.order = 'random'
+  config.extend TimecopHelpers
+
+  config.order = 'random'
 end

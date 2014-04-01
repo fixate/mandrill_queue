@@ -5,8 +5,7 @@
 [![Coverage Status](https://coveralls.io/repos/fixate/mandrill_queue/badge.png)](https://coveralls.io/r/fixate/mandrill_queue)
 
 DSL for sending mailers through Mailchimps Mandrill API. This gem enqueues the
-message on a background worker (`Resque` only for now, but I want to refactor
-so that it doesnt matter).
+message on a background worker (`Resque` or `Sidekiq` or write an adapter).
 
 The DSL is modelled on the JSON api [here](https://mandrillapp.com/api/docs/messages.ruby.html#method=send-template).
 
@@ -101,12 +100,18 @@ def html_message(html)
     html "<html><body>#{html}</html></body>"
   end
 end
+```
 
-# Meanwhile in another file...
-# maybe your controller...
+### Delivering mail
+
+Some code that undoubtably looks familiar to you:
+
+```ruby
 # Just like ActionMailer (note the class method calls are handed to instance methods)
 MyMailer.welcome_many(users).deliver
 ```
+
+This can be added anywhere like a Rails controller or Sinatra endpoint.
 
 ## Installation
 
@@ -151,23 +156,31 @@ end
 
 ## Setting up the worker
 
-Run it with a rake task like so:
+Run the worker in the normal way:
 
+    # Resque
     rake resque:work QUEUES=mailer
 
-TODO: I still need to check that everything is OK when running the worker in Rails
-since I run mine outside Rails as a lightweight worker using:
-
-    rake resque:work -r ./worker.rb QUEUES=mailer
+    # Sidekiq
+    sidekiq -q mailer
 
 
 ## Devise mailer integration
 
 Since Mandrill_Queue quacks like ActionMailer where it counts, getting your Devise
-mailers on Mandrill infrastructure is pretty easy. Here is my implementation:
+mailers on Mandrill infrastructure is pretty easy.
+
+Add the following to your devise initializer:
 
 ```ruby
-class DeviseMailer < MandrillResque::Mailer
+config.mailer = 'DeviseMailer'
+```
+
+Here is my DeviseMailer implementation:
+
+```ruby
+# app/mailers/devise_mailer.rb
+class DeviseMailer < MandrillQueue::Mailer
   defaults do
     message do
       from_email Devise.mailer_sender
@@ -208,14 +221,15 @@ end
 
 ## TODO
 
-1. Refactor so that it can work with `Sidekiq` or a custom adapter - coming soon...
+1. Render ActionView views to mailers.
 2. Allow synchonous sending.
-2. Render ActionView views to mailers.
 
 ## Contributing
 
 1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
+2. Create your feature branch (`git checkout -b feature/my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
+4. Push to the branch (`git push origin feature/my-new-feature`)
 5. Create new Pull Request
+
+or use [Git Flow](https://github.com/nvie/gitflow)

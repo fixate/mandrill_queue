@@ -4,47 +4,54 @@ require 'support/mailer'
 
 describe MandrillQueue::Mailer do
 	subject { TestMailer.new }
-	before(:each) { MandrillQueue.reset_config }
-	after(:all) { MandrillQueue.reset_config }
+
+  before(:each) do
+    MandrillQueue.reset_config
+    MandrillQueue.configure { |c| c.adapter = adapter }
+  end
+  after(:all) { MandrillQueue.reset_config }
+
+  let(:adapter) { double(:adapter, enqueue_to: true) }
+
 	def configure(&block)
 		subject.reset!
 		MandrillQueue.configure(&block)
 	end
 
 	it 'has chainable methods' do
-		subject.set!({}).should == subject
-		subject.use_defaults!.should == subject
+		expect(subject.set!({})).to eq(subject)
+		expect(subject.use_defaults!).to eq(subject)
 		subject.message.stub(:validate)
-		subject.validate!.should == subject
+		expect(subject.validate!).to eq(subject)
 	end
 
 	it 'sets message and content' do
 		hash = {message: { to: [{email: 'blah@foo.bar', type: 'to' }]}, content: [{name: 'foo', content: 'bar'}]}
 		subject.set!(hash)
-		subject.to_hash.should == hash
+		expect(subject.to_hash).to eq(hash)
 	end
 
 	it 'sets! initialized values' do
 		hash = {message: { to: [] }, template: '123'}
 		mailer = described_class.new(hash)
-		mailer.to_hash.should == hash
+		expect(mailer.to_hash).to eq(hash)
 	end
 
 	context 'message' do
 		it 'returns a message object without a block' do
 			message = subject.message
-			message.should be_kind_of MandrillQueue::Message::Internal
+			expect(message).to be_kind_of MandrillQueue::Message::Internal
 		end
 
 		it 'returns mailer with a block' do
-			subject.message() {}.should be_kind_of MandrillQueue::Mailer
+			expect(subject.message() {}).to be_kind_of MandrillQueue::Mailer
 		end
 
 		it 'resets the message to defaults' do
 			configure { |c| c.message_defaults[:subject] = 'My Subject' }
 			subject.message.set!({subject: 'My Other Subject'})
 			subject.reset!
-			subject.message.subject.should == 'My Subject'
+			expect(subject.message.subject).to eq('My Subject')
 		end
 	end
 
@@ -60,20 +67,26 @@ describe MandrillQueue::Mailer do
 				}
 			end
 
-			subject.message.to_hash.should == {
+			expect(subject.message.to_hash).to eq({
 				to: [{email: 'foo@bar.to', type: 'to'}],
 				from_email: 'foo@bar.from',
 				subject: 'FooBar!'
-			}
+			})
 
 			subject.class.defaults = olddefaults
 			subject.use_defaults!
 		end
+
+    it "doesn't raise error when message_defaults are nil and message defaults are set" do
+      configure { |c| c.message_defaults = nil }
+      described_class.defaults = {message: {}}
+      expect{ described_class.message_defaults }.to_not raise_error
+    end
 	end
 
 	context 'validation' do
 		it 'calls messages validate method' do
-			subject.message.should receive(:validate)
+			expect(subject.message).to receive(:validate)
 			subject.validate!
 		end
 	end
@@ -81,42 +94,42 @@ describe MandrillQueue::Mailer do
 	context 'dynamic template name' do
 		it 'uses the template prefix' do
 			subject.class.template_prefix 'testing123-'
-			subject.class.foo_mail.template.should == 'testing123-foo-mail'
+			expect(subject.class.foo_mail.template).to eq('testing123-foo-mail')
 			subject.class.template_prefix nil
 		end
 
 		it 'correctly handles a blank template prefix' do
 			subject.class.template_prefix ''
-			subject.class.foo_mail.template.should == 'foo-mail'
+			expect(subject.class.foo_mail.template).to eq('foo-mail')
 			subject.class.template_prefix nil
 		end
 
 		it 'gets all template names for mailer class' do
       subject.class.all_templates.each do |template|
-        [
+        expect([
           "test-foo-mail", "test-merge-vars", "test-html-message",
           "test-recipients-from-array", "test-recipients-from-array-with-custom-mapping",
           "test-recipients", "test-delayed-email", "test-short-mailer",
           "test-default-mailer", "test-attachment-mailer"
-        ].should include(template)
+        ]).to include(template)
       end
 		end
 
 		it 'uses called method for template name' do
-			subject.class.foo_mail.template.should == 'test-foo-mail'
+			expect(subject.class.foo_mail.template).to eq('test-foo-mail')
 		end
 
 		it 'does not override the default template name' do
 			olddefaults = subject.class.defaults
 			subject.class.defaults { template('FooBar') }
-			subject.class.foo_mail.template.should == 'FooBar'
+			expect(subject.class.foo_mail.template).to eq('FooBar')
 			subject.class.defaults = olddefaults
 			subject.reset!
 		end
 
 		it 'does not assign a template if html/text given' do
 			mailer = subject.class.html_message
-			mailer.template.should be_nil
+			expect(mailer.template).to be_nil
 		end
 	end
 
@@ -125,47 +138,46 @@ describe MandrillQueue::Mailer do
 			subject.template 'testing123'
 			subject.message.nillify!
 
-			subject.to_hash.should == {
+			expect(subject.to_hash).to eq({
 				template: 'testing123',
 				message: {}
-			}
+			})
 		end
 	end
 
 	context 'class level defaults' do
+    freeze_time!
+
 		it 'uses class level defaults' do
-			olddefaults = subject.class.defaults
+      olddefaults = subject.class.defaults
 
-			Timecop.freeze(Time.now) do
-				subject.class.defaults do
-					template 'foo-bar'
-					send_at Time.now
+      subject.class.defaults do
+        template 'foo-bar'
+        send_at Time.now
 
-					message do
-						to 'test@foobar.com'
-						from_email 'no-reply@foobar.com'
-						subject 'Foo Subject'
-					end
-				end
+        message do
+          to 'test@foobar.com'
+          from_email 'no-reply@foobar.com'
+          subject 'Foo Subject'
+        end
+      end
 
-				subject.use_defaults!
-				subject.to_hash.should == {
-					template: 'foo-bar',
-					send_at: Time.now,
-					message: {
-						to: [{email: "test@foobar.com", type: 'to'}],
-						from_email: "no-reply@foobar.com",
-						subject: 'Foo Subject'
-					}
-				}
-
-			end
+      subject.use_defaults!
+      expect(subject.to_hash).to eq({
+        template: 'foo-bar',
+        send_at: Time.now,
+        message: {
+          to: [{email: "test@foobar.com", type: 'to'}],
+          from_email: "no-reply@foobar.com",
+          subject: 'Foo Subject'
+        }
+      })
 
 			subject.class.defaults = olddefaults
 		end
 
 		it 'overrides defaults from method settings' do
-			TestMailer.foo_mail.to_hash.should == {
+			expect(TestMailer.foo_mail.to_hash).to eq({
 				template: 'test-foo-mail',
 				message: {
 					to: [
@@ -179,14 +191,14 @@ describe MandrillQueue::Mailer do
 					{name: 'main', content: 'Main content'},
 					{name: 'header', content: 'Header!'}
 				]
-			}
+			})
 		end
 
 		it 'does not use settings from previous calls' do
 			TestMailer.short_mailer
 			# Nothing from short_mailer should be used in other call
 
-			TestMailer.default_mailer.to_hash.should == {
+			expect(TestMailer.default_mailer.to_hash).to eq({
 				template: 'test-default-mailer',
 				message: {
 					from_email: 'no-reply@foobar.com',
@@ -197,29 +209,32 @@ describe MandrillQueue::Mailer do
 				content: [
 					{name: 'value', content: 'Content'}
 				]
-			}
+			})
 		end
 	end
 
 	context 'delivery' do
-		before(:each) { MandrillQueue.reset_config }
-		after(:all) { MandrillQueue.reset_config }
+    freeze_time!
 
 		def check_enqueue_to(*args)
-			Resque.should receive(:enqueue_to).with(*args)
+			expect(adapter).to receive(:enqueue_to).with(*args)
 		end
 
 		def configure(&block)
 			MandrillQueue.configure(&block)
 		end
 
-		it 'enqueues using configured class' do
-			resque = double(:my_resque)
-			configure do |config|
-				config.resque = resque
-			end
+    before(:each) do
+      MandrillQueue.reset_config
+      MandrillQueue.configure { |c| c.adapter = adapter }
+    end
+    after(:all) { MandrillQueue.reset_config }
 
-			resque.should receive(:enqueue_to).with(subject.queue, subject.worker_class, subject.to_hash)
+		it 'enqueues using configured class' do
+			resque = double(:my_resque, enqueue_to: true)
+			configure { |config| config.adapter = resque }
+
+      expect(resque).to receive(:enqueue_to).with(subject.queue, subject.worker_class, subject.to_hash)
 			subject.deliver
 		end
 
@@ -234,7 +249,7 @@ describe MandrillQueue::Mailer do
 				config.default_worker_class = my_worker
 			end
 
-			check_enqueue_to(subject.queue, my_worker, subject.to_hash)
+      check_enqueue_to(subject.queue, my_worker, subject.to_hash)
 			subject.deliver
 		end
 
@@ -270,14 +285,11 @@ describe MandrillQueue::Mailer do
 		end
 
 		it 'validates on delivery' do
-			Resque.stub_me!
-
-			subject.should receive(:validate!)
+			expect(subject).to receive(:validate!)
 			subject.deliver
 		end
 
 		it 'delivers hash with message data' do
-			Timecop.freeze(Time.now)
 			subject.dsl do
 				message do
 					to 'foo@bar.to'
@@ -293,15 +305,15 @@ describe MandrillQueue::Mailer do
 
 			message = {
 				to: [
-					{email: 'tester@foobar.com', type: 'to'},
-					{email: 'foo@bar.to', type: 'to'}
+          {type: 'to', email: 'tester@foobar.com'},
+          {type: 'to', email: 'foo@bar.to'}
 				],
 				from_email: 'bar@baz.from',
 			}
 
 			hash = {
-				send_at: Time.new + 10,
 				template: 'foo-template',
+        send_at: Time.new + 10,
 				message: message,
 				content: [
 					{name: 'main', content: 'Main content'},
@@ -309,10 +321,8 @@ describe MandrillQueue::Mailer do
 				]
 			}
 
-			Resque.should receive(:enqueue_to).with(subject.queue, subject.worker_class, hash)
+      check_enqueue_to(subject.queue, subject.worker_class, hash)
 			subject.deliver
-
-			Timecop.return
 		end
 	end
 
