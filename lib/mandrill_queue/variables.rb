@@ -63,7 +63,7 @@ module MandrillQueue
 			def set!(hash, options = {})
 				case hash
 				when Hash
-					@_variables = hash.symbolize_keys
+          @_variables = hash.to_hash.symbolize_keys
 				when Array
 					options[:name_key] ||= :name
 					options[:content_key] ||= :content
