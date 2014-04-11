@@ -34,7 +34,7 @@ module MandrillQueue
 			]
 
 			def initialize(values = nil)
-				set!(values) unless values.nil?
+        set!(values) unless values.nil?
 			end
 
 			ACCESSORS.each do |method|
@@ -64,7 +64,7 @@ module MandrillQueue
 
 			def set!(values)
 				nillify!
-				values.symbolize_keys!
+        values.to_hash.symbolize_keys!
 				transform_accessors! { |k| values[k] }
 
 				EXTERNAL_ACCESSORS.each do |key|

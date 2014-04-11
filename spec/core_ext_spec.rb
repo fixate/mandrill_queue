@@ -37,7 +37,6 @@ describe 'Ruby core extensions' do
 			hash.should == {1234 => 'foo'}
 		end
 
-
 		it 'symbolizes keys' do
 			hash = {}
 			hash2 = hash.symbolize_keys
