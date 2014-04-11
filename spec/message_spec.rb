@@ -13,7 +13,6 @@ describe MandrillQueue::Message::Internal do
 	end
 
 	it 'ignores invalid defaults' do
-		message = nil
 		expect do
 			subject.set!(to: 'foo@bar.to', from_email: 'foo@bar.from', bunch: 'oh crap')
 		end.not_to raise_error
@@ -28,6 +27,43 @@ describe MandrillQueue::Message::Internal do
 		subject.recipients.last.should_not be_nil
 		subject.recipients.last.email.should == 'foo@bar.to'
 	end
+
+  it 'works for Hash with indifferent access' do
+    subject.set!({to: 'foo@bar.to'}.with_indifferent_access)
+
+    subject.recipients.last.should_not be_nil
+    subject.recipients.last.email.should == 'foo@bar.to'
+  end
+
+  it 'works for Hash with indifferent access' do
+
+  end
+
+  it 'uses set to set defaults' do
+    described_class.any_instance.should_receive(:set!).with(to: 'foo@bar.to', from_email: 'foo@bar.from')
+    described_class.new(to: 'foo@bar.to', from_email: 'foo@bar.from')
+  end
+
+  context 'recipients' do
+    it 'returns correct hash of recipients' do
+      hash = {
+        to: [
+          {email: 'tester@foobar.com', type: 'to'},
+          {email: 'foo@bar.to', type: 'to'},
+          {email: 'foo@bar.to2', name: 'Foo two', type: 'to'},
+          {email: 'foo@bar.to3', name: 'Foo three', type: 'to'},
+          {email: 'foo@bar.cc', type: 'cc'},
+          {email: 'foo@bar.bcc', name: 'BCC', type: 'bcc'},
+        ],
+        from_email: 'no-reply@foobar.com'
+      }
+
+      TestMailer.recipients.message.to_hash.should == hash
+    end
+  end
+
+  context 'Attachments and images' do
+  end
 
 	it 'uses set to set defaults' do
 		described_class.any_instance.should_receive(:set!).with(to: 'foo@bar.to', from_email: 'foo@bar.from')
