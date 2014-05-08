@@ -23,7 +23,7 @@ Gem::Specification.new do |spec|
   else
     spec.add_dependency "activesupport", "~> 3"
   end
-  spec.add_dependency "mandrill-api", "1.0.49"
+  spec.add_dependency "mandrill-api", "1.0.51"
 
   spec.add_development_dependency "bundler", "~> 1.3"
   spec.add_development_dependency "rake"
