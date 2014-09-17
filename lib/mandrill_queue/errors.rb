@@ -16,6 +16,7 @@ module MandrillQueue
 	end
 
 	class MessageError < Error; end
+  class ConfigurationError < Error; end
 
 	class VariableError < Error; end
 	class VariableNotSetError < VariableError; end
