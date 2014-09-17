@@ -117,7 +117,9 @@ This can be added anywhere like a Rails controller or Sinatra endpoint.
 
 You probably already know this bit:
 
-    gem 'resque' # Support for Sidekiq and writing custom adapters coming soon...
+    gem 'sidekiq' 
+    # or
+    # gem 'resque'
     gem 'mandrill_queue'
 
 but didn't know this (but it's optional):
@@ -149,6 +151,7 @@ but here's a taster:
         # NEEDED FOR WORKER ONLY
         # Mandrill api key needed for worker only
         config.api_key = 'xxxxxx'
+        config.adapter = MyQueueAdapter # or just :sidekiq / :resque
         config.default_worker_class = MyWorker
         config.default_queue = :hipster_queue
 end
