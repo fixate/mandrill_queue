@@ -1,5 +1,6 @@
 require 'mandrill_queue/railtie' if defined?(Rails)
 require 'mandrill_queue/core_ext'
+require 'mandrill_queue/errors'
 require 'mandrill_queue/configuration'
 require 'mandrill_queue/mailer'
 
