@@ -19,11 +19,11 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   if RUBY_VERSION >= "1.9.3"
-    spec.add_dependency "activesupport", "~> 4.0.0"
+    spec.add_dependency "activesupport", [">= 4", "< 5"]
   else
-    spec.add_dependency "activesupport", "~> 3"
+    spec.add_dependency "activesupport", ">= 3"
   end
-  spec.add_dependency "mandrill-api", "1.0.49"
+  spec.add_dependency "mandrill-api", "1.0.51"
 
   spec.add_development_dependency "bundler", "~> 1.3"
   spec.add_development_dependency "rake"

@@ -11,15 +11,15 @@ end
 describe MandrillQueue::Message::Images::Image do
 	it 'detects image mime types' do
 		subject.type 'image/jpeg'
-		subject.image_type?.should be_true
+		subject.image_type?.should eq(true)
 	end
 
 	it 'returns false for non image mime types' do
 		subject.type 'fake/mime'
-		subject.image_type?.should be_false
+		subject.image_type?.should eq(false)
 
 		subject.type 'image/fake'
-		subject.image_type?.should be_false
+		subject.image_type?.should eq(false)
 	end
 
 	it 'validates image type' do
