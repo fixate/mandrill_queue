@@ -224,8 +224,9 @@ end
 
 ## TODO
 
-1. Render ActionView views to mailers.
-2. Allow synchonous sending.
+1. NB! Change DSL to pass in arguments to blocks so that the class context is still accessible within them.
+2. Render ActionView views to mailers.
+3. Allow synchonous sending.
 
 ## Contributing
 
