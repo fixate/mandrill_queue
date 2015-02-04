@@ -41,4 +41,9 @@ MandrillQueue.configure do |config|
 	# Used to set the current logger. This can be any object
 	# that responds to debug, info, warn, error and fatal
 	# config.logger = MyLoggingClass
+  #
+  # Default options passed through to the queue adapter
+  # These options can mean different things depending on
+  # which adapter you choose.
+  # config.adapter_options = {}
 end

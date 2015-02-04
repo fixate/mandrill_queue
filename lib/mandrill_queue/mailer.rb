@@ -81,6 +81,7 @@ module MandrillQueue
 
 		def initialize(values = nil)
 			set!(values) unless values.nil?
+      @_adapter_options = self.class.configuration.adapter_options || {}
 		end
 
 		def reset!
@@ -133,8 +134,13 @@ module MandrillQueue
 
 		def deliver
 			validate!
-			MandrillQueue.adapter.enqueue_to(queue, worker_class, to_hash)
+			MandrillQueue.adapter.enqueue_to(queue, worker_class, adapter_options, to_hash)
 		end
+
+    def adapter_options(options = nil)
+      @_adapter_options.merge!(options) unless options.nil?
+      @_adapter_options ||= {}
+    end
 
 		def to_hash(options = {})
 			hash = {}
@@ -145,7 +151,7 @@ module MandrillQueue
 
 			hash[:message] = message.to_hash(options) rescue nil if !@_message.nil? || options[:include_nils]
 			hash[:content] = content.to_key_value_array(options) rescue nil if !@_content.nil? || options[:include_nils]
-			hash
+      hash
 		end
 
 		def set!(hash)

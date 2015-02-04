@@ -234,12 +234,12 @@ describe MandrillQueue::Mailer do
 			resque = double(:my_resque, enqueue_to: true)
 			configure { |config| config.adapter = resque }
 
-      expect(resque).to receive(:enqueue_to).with(subject.queue, subject.worker_class, subject.to_hash)
+      expect(resque).to receive(:enqueue_to).with(subject.queue, subject.worker_class, {}, subject.to_hash)
 			subject.deliver
 		end
 
 		it 'uses the built-in worker' do
-			check_enqueue_to(subject.queue, MandrillQueue::Worker, subject.to_hash)
+			check_enqueue_to(subject.queue, MandrillQueue::Worker, {}, subject.to_hash)
 			subject.deliver
 		end
 
@@ -249,7 +249,7 @@ describe MandrillQueue::Mailer do
 				config.default_worker_class = my_worker
 			end
 
-      check_enqueue_to(subject.queue, my_worker, subject.to_hash)
+      check_enqueue_to(subject.queue, my_worker, {}, subject.to_hash)
 			subject.deliver
 		end
 
@@ -257,7 +257,7 @@ describe MandrillQueue::Mailer do
 			my_worker = double(:worker)
 			subject.stub(:worker_class).and_return(my_worker)
 
-			check_enqueue_to(subject.queue, my_worker, subject.to_hash)
+			check_enqueue_to(subject.queue, my_worker, {}, subject.to_hash)
 			subject.deliver
 		end
 
@@ -266,23 +266,29 @@ describe MandrillQueue::Mailer do
 				config.default_queue = :foo_queue
 			end
 
-			check_enqueue_to(:foo_queue, subject.worker_class, subject.to_hash)
+			check_enqueue_to(:foo_queue, subject.worker_class, {}, subject.to_hash)
 			subject.deliver
 		end
 
 		it 'uses the overriden queue in mailer' do
 			subject.stub(:queue).and_return(:bar_queue)
 
-			check_enqueue_to(:bar_queue, subject.worker_class, subject.to_hash)
+			check_enqueue_to(:bar_queue, subject.worker_class, {}, subject.to_hash)
 			subject.deliver
 		end
 
 		it 'uses the overriden queue in worker' do
 			subject.worker_class.stub(:queue).and_return(:bar_worker_queue)
 
-			check_enqueue_to(:bar_worker_queue, subject.worker_class, subject.to_hash)
+			check_enqueue_to(:bar_worker_queue, subject.worker_class, {}, subject.to_hash)
 			subject.deliver
 		end
+
+    it 'uses the options provided in the mailer' do
+      subject.adapter_options(send_in: 1.day)
+      check_enqueue_to(:mailer, subject.worker_class, {send_in: 1.day}, subject.to_hash)
+      subject.deliver
+    end
 
 		it 'validates on delivery' do
 			expect(subject).to receive(:validate!)
@@ -321,7 +327,7 @@ describe MandrillQueue::Mailer do
 				]
 			}
 
-      check_enqueue_to(subject.queue, subject.worker_class, hash)
+      check_enqueue_to(subject.queue, subject.worker_class, {}, hash)
 			subject.deliver
 		end
 	end

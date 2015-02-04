@@ -5,6 +5,8 @@ require 'mandrill_queue/configuration'
 require 'mandrill_queue/mailer'
 
 module MandrillQueue
+  @@lock = Mutex.new
+
 	def self.configuration
 		@configuration ||= Configuration.new(defaults)
 	end
@@ -33,18 +35,20 @@ module MandrillQueue
   end
 
   def self.adapter
-    @_adapter ||= begin
-      unless adapter = configuration.adapter
-        adapter = :resque if defined(::Resque)
-        adapter = :sidekiq if defined(::Sidekiq)
-        if adapter.nil?
-          raise RuntimeError, <<-TXT.strip.tr("\t", '')
-            Worker adapter was not configured and cannot be determined.
-            Please include a worker gem in your Gemfile. Resque and Sidekiq are supported.
-          TXT
+    @@lock.synchronize do
+      @_adapter ||= begin
+        unless adapter = configuration.adapter
+          adapter = :resque if defined(::Resque)
+          adapter = :sidekiq if defined(::Sidekiq)
+          if adapter.nil?
+            raise RuntimeError, <<-TXT.strip.tr("\t", '')
+              Worker adapter was not configured and cannot be determined.
+              Please include a worker gem in your Gemfile. Resque and Sidekiq are supported.
+            TXT
+          end
         end
+        load_adapter(adapter)
       end
-      load_adapter(adapter)
     end
   end
 
