@@ -22,6 +22,6 @@ platforms :rbx do
   gem 'rubysl'
 end
 
-group :development, :test do
-  gem 'pry-byebug', platform: :ruby
-end
+# group :development, :test do
+#   gem 'pry-byebug', platform: :ruby
+# end
