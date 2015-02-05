@@ -290,6 +290,12 @@ describe MandrillQueue::Mailer do
       subject.deliver
     end
 
+    it 'merges options provided through deliver method' do
+      subject.adapter_options(send_in: 1.day)
+      check_enqueue_to(:mailer, subject.worker_class, {send_in: 1.hour}, subject.to_hash)
+      subject.deliver(send_in: 1.hour)
+    end
+
 		it 'validates on delivery' do
 			expect(subject).to receive(:validate!)
 			subject.deliver

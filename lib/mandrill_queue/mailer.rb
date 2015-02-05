@@ -132,9 +132,9 @@ module MandrillQueue
 			end
 		end
 
-		def deliver
+		def deliver(options = {})
 			validate!
-			MandrillQueue.adapter.enqueue_to(queue, worker_class, adapter_options, to_hash)
+      MandrillQueue.adapter.enqueue_to(queue, worker_class, adapter_options.merge(options), to_hash)
 		end
 
     def adapter_options(options = nil)
