@@ -94,6 +94,17 @@ class MyMailer < MandrillQueue::Mailer
   send_in 2.days.from_now
 end
 
+ def message_with_attachments # Template slug: my-message-with-attachements
+    message do
+      # (...)
+      
+      attachments do
+        add('/my/file', load_file: true)
+        add('BASE64 ENCODED FILE DATA HERE', name: 'my.pdf')
+      end
+    end
+  end
+
 def html_message(html)
   message do
     # (omitted)
