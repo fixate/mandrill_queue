@@ -99,8 +99,8 @@ end
       # (...)
       
       attachments do
-        add('/my/file', load_file: true)
-        add('BASE64 ENCODED FILE DATA HERE', name: 'my.pdf')
+        add('/my/file.pdf', load_file: true) # File type inferred from extension
+        add('RAW file contents here e.g. IO.read("my/file")', type: :pdf)
       end
     end
   end
